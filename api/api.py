@@ -40,8 +40,10 @@ def joinRoom():
 def login():  
 
 
-
-
+@app.route('/', methods=['GET'])
+def home():
+    return "<h1>This site is a prototype API</h1>"
+    
 
 if __name__ == "__main__":
     app.run()
