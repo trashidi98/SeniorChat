@@ -25,8 +25,9 @@ USERS: List[User] = [
     User('b', 'example2@s.com', 2),
 ]
 
-USER_MAPPINGS: Dict[int, List[int]] = {0: set([1]), 1: set([0, 1]), 2: set([1, 0]), 3: set([1,2,0])}
-
+USER_MAPPINGS: Dict[int, List[int]] = {0: set([1]), 1: set([0, 1]), 2: set([1, 0])}
+def username_to_id(username: str):
+    return [user for user in USERS if user.username == username][0]
 
 @app.route('/contacts', methods=['GET'])
 def get_contacts():
@@ -34,14 +35,14 @@ def get_contacts():
     contact_ids = USER_MAPPINGS.get(user_id)
     return {i: USERS[i].as_dict() for i in contact_ids}
 
-@app.route('/contacts', methods=['POST'])
+@app.route('/contact', methods=['POST'])
 def add_contact():
     user_id = int(request.headers.get('user_id'))
     friend_name = request.json.get('friend_user_name')
     friend_id = [user for user in USERS if user.username == friend_name][0].id_
     USER_MAPPINGS[user_id].append(friend_id)
 
-@app.route('/contacts', methods=['DELETE'])
+@app.route('/contact', methods=['DELETE'])
 def delete_contact():
     user_id = int(request.headers.get('user_id'))
     friend_name = request.json.get('friend_user_name')
