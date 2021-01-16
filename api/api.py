@@ -9,9 +9,8 @@ app.config["DEBUG"] = True
 
 # Display contents on login
 @app.route('/api/v1/contacts', methods=['GET'])
-def home():
+def displayContacts():
     return "<h1>This site is a prototype API</h1>"
-
 
 
 # Adds a contact
@@ -20,7 +19,7 @@ def addContact():
 	pass
 
 # Delete contact 
-@app.route('/api/v1/contact' methods=['DELETE'])
+@app.route('/api/v1/contact', methods=['DELETE'])
 def delContact():
 	pass
 
@@ -34,11 +33,12 @@ def createRoom():
 # Join a room 
 @app.route('/api/v1/user/room_id', methods=['GET'])
 def joinRoom():
+    pass
 
 
 @app.route('/api/v1/login', methods=['POST'])
 def login():  
-
+    pass
 
 @app.route('/', methods=['GET'])
 def home():
@@ -48,3 +48,5 @@ def home():
 
 if __name__ == "__main__":
     app.run()
+
+
