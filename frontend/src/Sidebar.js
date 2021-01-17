@@ -4,7 +4,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 const styles = theme => ({
   listItemText:{
-    fontSize:'0.7em',//Insert your required size
+    fontSize:'1.7em',//Insert your required size
   }
 });
 function Sidebar({ items }) {

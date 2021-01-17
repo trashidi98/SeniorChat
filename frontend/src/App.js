@@ -1,7 +1,12 @@
 import React from 'react';
 import styled from "styled-components";
 import ContactCard from "./ContactCard";
-import Sidebar from './Test'
+import Sidebar from './Sidebar';
+
+
+
+
+
 const items = [
   {name: 'home', label:'Home', image: "https://cdn1.iconfinder.com/data/icons/free-98-icons/32/call-512.png"},
   {name: 'searching', label:'Searching',image: "https://static.thenounproject.com/png/105498-200.png"},
@@ -15,7 +20,11 @@ const CardWrapper = styled.div`
   margin-left: 2em;
 `;
 
+
+
+
 function App(){
+
 
   const sayHello = () =>{
     console.log("hello"); 
