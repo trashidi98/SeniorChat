@@ -1,4 +1,5 @@
 import flask
+import sqlite3
 
 from flask import request, jsonify 
 
@@ -16,24 +17,24 @@ def displayContacts():
 # Adds a contact
 @app.route('/api/v1/contact', methods=['POST'])
 def addContact(): 
-	pass
+    args = request.args
 
 # Delete contact 
 @app.route('/api/v1/contact', methods=['DELETE'])
 def delContact():
-	pass
+	args = request.args
 
 
 # Create a room 
 @app.route('/api/v1/user/room_id', methods=['POST'])
 def createRoom(): 
-	pass
+	args = request.args
 
 
 # Join a room 
 @app.route('/api/v1/user/room_id', methods=['GET'])
 def joinRoom():
-    pass
+    args = request.args
 
 
 @app.route('/api/v1/login', methods=['POST'])
@@ -44,7 +45,11 @@ def login():
 def home():
     return "<h1>This site is a prototype API</h1>"
 
-    
+
+conn = sqlite3.connect('data.db')
+
+
+
 
 if __name__ == "__main__":
     app.run()
