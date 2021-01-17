@@ -16,6 +16,10 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     roomId = db.Column(db.String(80))
 
+    def __init__(self, username, email): 
+        self.username = username 
+        self.email = email
+
     @property
     def serialize(self):
        """Return object data in easily serializable format"""
@@ -32,11 +36,7 @@ class User(db.Model):
 class ContactMapping(db.Model):
     id_ = db.Column(db.Integer, primary_key=True)
     first_user_id = db.Column(db.Integer)
-    second_user_id = db.Column(db.Integer)
-
-    def __repr__(self):
-        return ('<ContactMapping> %r -> %r' % (self.first_user_id, self.second_user_id))
-    
+    second_user_id = db.C, id
 
 # Display contents on login
 @app.route('/api/v1/contacts', methods=['GET'])
@@ -51,7 +51,7 @@ def displayContacts():
 @app.route('/api/v1/contact', methods=['POST'])
 def addContact():
     user_id = int(request.headers.get('user_id'))
-    friend_email = request.json.get('friend_email')
+    friend_email = request.args.get('friend_email')
     try:
         friend_user: User = User.query.filter_by(email=friend_email).all()[0]
         mapping = ContactMapping(first_user_id=user_id, second_user_id=friend_user.id_)
@@ -95,7 +95,34 @@ def joinRoom():
 
 @app.route('/api/v1/login', methods=['POST'])
 def login():  
-    pass
+    auth_token = str(request.headers.get('auth_token'))
+    email = str(request.headers.get('email'))
+    username = str(request.json.get('username'))
+
+    user = db.session.query(User).filter_by(email=email).first()
+
+    if user is None: 
+        user = User(username, email)
+        db.session.add(user)
+        db.session.commit()
+        return user.id
+
+    return user.id
+
+
+
+    # TODO queryParams vs headers 
+    # authtok is header
+    # everything else is a queryParam 
+
+    # TODO look at Firebase documentation for what fields inside auth token are available 
+    
+    # TODO
+    # Parse out email and username (FirstName LastName from AuthToken) from auth token  
+    # because that information is needed in every one of these functions it should be broken out into its own function 
+    # i.e. AUTHTOKEN CONTAINS (email, username) this should be parsed by a function and passed to whoever needs it 
+
+
 
 @app.route('/', methods=['GET'])
 def home():
