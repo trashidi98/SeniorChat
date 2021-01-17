@@ -58,7 +58,7 @@ def addContact():
         db.session.add(mapping)
         db.session.commit()
     except IndexError: # if there are no users with given email
-        pass
+        return jsonify({'Status': 'No Contact exists with that email'})
     return jsonify({})
 
 
