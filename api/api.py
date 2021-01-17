@@ -48,9 +48,19 @@ class UserToGroup(db.Model):
     user_id = db.Column(db.Integer)
     group_id = db.Column(db.Integer)
 
+@app.route('/api/v1/text', methods=['POST'])
+def send_text():
+    user_id = int(request.headers.get('user_id'))
+    if len(User.query.filter_by(id_=user_id).all()) == 0:
+        abort(404)
+    body: str = request.json.get('body')
+    username = User.query.get(user_id).username
+    phoneTo = request.json.get('phoneTo')
+    helpers.send_sms(phoneTo, username + '\n' + body)
+    return jsonify({})
+
 @app.route('/api/v1/user/room_id', methods=['POST'])
 def get_access_token():
-    breakpoint()
     user_id = int(request.headers.get('user_id'))
     if len(User.query.filter_by(id_=user_id).all()) == 0:
         abort(404)
@@ -110,15 +120,15 @@ def delContact():
     db.session.commit()
     return jsonify({})
 
-# Create a room
-@app.route('/api/v1/user/room_id', methods=['POST'])
-def createRoom():
-    user_id = int(request.headers.get('user_id'))
-    room_id = request.json.get('room_id')
-    user: User = User.query.filter_by(id_=user_id).all()[0]
-    user.roomId = room_id
-    db.session.commit()
-    return jsonify({})
+# # Create a room (REPLACED BY get_access_token)
+# @app.route('/api/v1/user/room_id', methods=['POST'])
+# def createRoom():
+#     user_id = int(request.headers.get('user_id'))
+#     room_id = request.json.get('room_id')
+#     user: User = User.query.filter_by(id_=user_id).all()[0]
+#     user.roomId = room_id
+#     db.session.commit()
+#     return jsonify({})
 
 # Join a room #TODO: When we setup twilio, this should probably return the access token for the room.
 @app.route('/api/v1/user/room_id', methods=['GET'])
