@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from "styled-components";
-import img from "./images/family.jpg"
 
 const ContactCardTextShadow = styled.div`
   background-color: rgba(255, 255, 255, 0.4);
@@ -22,7 +21,7 @@ const ContactCardText = styled.p`
 `;
 
 const ContactCardBackground = styled.div`
-  background-image: url(${img});
+  background-image: url(${props => props.image});
   background-size: cover;
   height: 20em;
   width: 30em;
@@ -46,7 +45,7 @@ const ContactCardWrapper = styled.div`
 function ContactCard(props){
   return(
     <ContactCardWrapper onClick={() => {props.setGroup(props.name); props.setCurrent()}}>
-      <ContactCardBackground>
+      <ContactCardBackground image={props.image}>
         <ContactCardTextShadow>
           <ContactCardText>{props.name}</ContactCardText>
         </ContactCardTextShadow>
