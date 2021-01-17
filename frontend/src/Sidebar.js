@@ -39,13 +39,13 @@ const SidebarLabel = styled.div`
   padding-left: 0.2em;
 `;
 
-function Sidebar({ items }) {
+function Sidebar({ items, setCurrent }) {
   return (
     <SidebarWrapper>
       <List disablePadding dense>
         <HeaderItem>SeniorChat</HeaderItem>
-        {items.map(({ label, name,image, ...rest }) => (
-          <SidebarItem key={name} button {...rest}> 
+        {items.map(({ label, name, image, pageLink, ...rest }) => (
+          <SidebarItem key={name} button {...rest} onClick={() => {setCurrent(pageLink)}} > 
           <img src = {image} width="40" height="40"></img>
           <SidebarLabel>{label}</SidebarLabel>  
           </SidebarItem>

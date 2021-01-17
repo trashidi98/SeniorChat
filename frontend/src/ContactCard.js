@@ -45,7 +45,7 @@ const ContactCardWrapper = styled.div`
 
 function ContactCard(props){
   return(
-    <ContactCardWrapper>
+    <ContactCardWrapper onClick={() => {props.setGroup(props.name); props.setCurrent()}}>
       <ContactCardBackground>
         <ContactCardTextShadow>
           <ContactCardText>{props.name}</ContactCardText>
