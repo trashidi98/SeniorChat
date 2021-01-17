@@ -6,7 +6,6 @@ import Sidebar from './Sidebar';
 import Header from './Header'
 import Signin from './Signin'
 
-
 const items = [
   {name: 'home', pageLink: "home", label:'Home', image: "https://cdn1.iconfinder.com/data/icons/free-98-icons/32/call-512.png"},
   {name: 'searching', pageLink: "addFriends", label:'Add Friends',image: "https://static.thenounproject.com/png/105498-200.png"},
@@ -41,7 +40,7 @@ const router = (currentPage, setCurrentPage, callGroup, setCallGroup) => {
 }
 
 function App(){
-  const [currentPage, setCurrentPage] = useState("signin");
+  const [currentPage, setCurrentPage] = useState("home");
   const [callGroup, setCallGroup] = useState("N/A");
 
   if (currentPage == "signin") {
