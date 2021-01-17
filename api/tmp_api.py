@@ -39,16 +39,18 @@ def get_contacts():
 def add_contact():
     user_id = int(request.headers.get('user_id'))
     friend_name = request.json.get('friend_user_name')
-    friend_id = [user for user in USERS if user.username == friend_name][0].id_
+    friend_id = username_to_id(friend_name)
     USER_MAPPINGS[user_id].append(friend_id)
+    return {}
 
 @app.route('/contact', methods=['DELETE'])
 def delete_contact():
     user_id = int(request.headers.get('user_id'))
     friend_name = request.json.get('friend_user_name')
-    friend_id = [user for user in USERS if user.username == friend_name][0].id_
+    friend_id = username_to_id(friend_name)
     contacts = USER_MAPPINGS[user_id]
     contacts.remove(friend_id)
+    return {}
 
 @app.route('/user/room_id', methods=['POST'])
 def create_room():
@@ -56,6 +58,7 @@ def create_room():
     room_id = request.json.get('room_id')
     user = USERS[user_id]
     user.roomId = room_id
+    return {}
 
 @app.route('/user/room_id', methods=['GET'])
 def join_room():
@@ -63,7 +66,19 @@ def join_room():
     user_id = int(request.headers.get('user_id'))
     host_name = request.json.get('host_user_name')
     host_user = [user for user in USERS if user.username == host_name][0]
-    return host_user.roomId
+    return host_user.roomId if host_user.roomId!=None else  {}
 
 if __name__ == "__main__":
     app.run()
+
+"""
+Example:
+
+1. Run: python3 tmp_api.py
+2. curl -i -H "user_id: 0" -H "Content-Type: application/json" -X GET -d '{"host_user_name": "saif"}' http://localhost:5000/user/room_id # Get Room
+3. curl -i -H "user_id: 0" -H "Content-Type: application/json" -X POST -d '{"room_id": "someRoomId"}' http://localhost:5000/user/room_id # Assign Room
+
+Get room again
+4. curl -i -H "user_id: 0" -H "Content-Type: application/json" -X GET -d '{"host_user_name": "saif"}' http://localhost:5000/user/room_id # Get Room
+
+"""
