@@ -1,6 +1,12 @@
 import React from 'react';
-import Test from "./Test"
 import ContactCard from "./ContactCard";
+import Sidebar from './Test'
+const items = [
+  {name: 'home', label:'Home'},
+  {name: 'searching', label:'Searching'},
+  {name: 'profile', label: 'Profile'}, 
+  {name: 'setting', label: 'Setting'}, 
+]
 
 function App(){
 
@@ -11,8 +17,8 @@ function App(){
   console.log(counter);
   return(
     <div>
-      <Test/>
       <ContactCard/>
+      <Sidebar items = {items} />
       <h1>Hello React </h1>
       <button> hello </button>
       </div>
