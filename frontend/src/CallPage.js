@@ -15,14 +15,16 @@ const CallWrapper = styled.div`
 const CallTitle = styled.div`
   font-size: 2.5em;
   font-weight: bold;
-  padding-bottom: 1em;
+`
+
+const CallInnerWrapper = styled.div`
+  background-color: #fafafa;
+  width: 80em;
+  margin: 3em;
 `
 
 const CallWindow = styled.div`
-  background-color: #dbdbdb;
-  width: 70em;
-  height: 50em;
-  margin: 3em;
+  display: inline-block;
 `
 
 const watchSelf = () => {
@@ -77,8 +79,10 @@ function CallPage(props){
   return(
     <CallWrapper>
       <CallTitle>Calling {props.callGroup}</CallTitle>
-      <CallWindow id="local-media" />
-      <CallWindow id="remote-media-div" height="50em" />
+      <CallInnerWrapper>
+        <CallWindow id="local-media" />
+        <CallWindow id="remote-media-div" height="50em" />
+      </CallInnerWrapper>
     </CallWrapper>
   );
 }
