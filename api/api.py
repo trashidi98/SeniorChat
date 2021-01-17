@@ -47,7 +47,15 @@ def home():
 
 
 conn = sqlite3.connect('data.db')
+cursor = conn.cursor()
 
+cursor.execute("""CREATE TABLE users (
+    id int, 
+    email varchar(255),
+    Name varchar(255)
+)""")
+
+cursor.execute("""CREATE TABLE friendmappings""")
 
 
 
