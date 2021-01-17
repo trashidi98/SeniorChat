@@ -1,5 +1,20 @@
 import React from 'react';
+import firebase from "firebase/app";
+import "firebase/auth";
 import styled from "styled-components";
+
+const SigninWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const SigninForm = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`;
 
 class Signin extends React.Component{
   render(){
@@ -15,7 +30,11 @@ class Signin extends React.Component{
     };
 
   //Initialize Firebase
+  if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
+  } else {
+    firebase.app();
+  }
 
   function login() {
       var provider = new firebase.auth.GoogleAuthProvider();
@@ -46,19 +65,12 @@ class Signin extends React.Component{
   }
 
     return(
-      <div> 
-        <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
-        <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
-        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
-        
-        <div id="login_div" class="main-div">
-        <centre>
-        <h2 style="text-align:center;">Welcome to SeniorChat!</h2>
-        </centre>
-        <button onclick="login()">Login using Google</button>
-        </div>
-
-      </div>
+      <SigninWrapper>
+        <SigninForm id="login_div" className="main-div">
+        <h2>Welcome to SeniorChat!</h2>
+        <button onClick={login}>Login using Google</button>
+        </SigninForm>
+      </SigninWrapper>
     )
   }
 }

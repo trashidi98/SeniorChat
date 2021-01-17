@@ -40,7 +40,7 @@ const router = (currentPage, setCurrentPage, callGroup, setCallGroup) => {
 }
 
 function App(){
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState("signin");
   const [callGroup, setCallGroup] = useState("N/A");
 
   if (currentPage == "signin") {
