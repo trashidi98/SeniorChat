@@ -3,6 +3,7 @@ import flask
 import sqlite3
 from flask import request, jsonify, Flask, abort
 from flask_sqlalchemy import SQLAlchemy
+import helpers
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -47,6 +48,19 @@ class UserToGroup(db.Model):
     user_id = db.Column(db.Integer)
     group_id = db.Column(db.Integer)
 
+@app.route('/api/v1/user/room_id', methods=['POST'])
+def get_access_token():
+    breakpoint()
+    user_id = int(request.headers.get('user_id'))
+    if len(User.query.filter_by(id_=user_id).all()) == 0:
+        abort(404)
+    room_id: str = request.json.get('room_id')
+    username = User.query.get(user_id).username
+    token_jwt = helpers.video_access_token(roomId=room_id, username=username)
+    # this doesn't match other returns because token returns a byte-object. This is okay.
+    return jsonify({'token': token_jwt.decode('utf-8')})
+
+    
 
 # Display contents on login
 @app.route('/api/v1/contact_groups', methods=['GET'])
