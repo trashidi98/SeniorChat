@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from "styled-components";
 import ContactCard from "./ContactCard";
 import Sidebar from './Test'
 const items = [
@@ -7,6 +8,12 @@ const items = [
   {name: 'profile', label: 'Profile'}, 
   {name: 'setting', label: 'Setting'}, 
 ]
+
+const CardWrapper = styled.div`
+  display: inline-block;
+  width: 100%;
+  margin-left: 2em;
+`;
 
 function App(){
 
@@ -17,11 +24,15 @@ function App(){
   console.log(counter);
   return(
     <div>
-      <ContactCard/>
       <Sidebar items = {items} />
-      <h1>Hello React </h1>
-      <button> hello </button>
-      </div>
+      <CardWrapper>
+        <ContactCard name="Family" />
+        <ContactCard name="Friends" />
+        <ContactCard name="Stephen" />
+        <ContactCard name="Sabrina" />
+        <ContactCard name="Mom and Dad" />
+      </CardWrapper>
+    </div>
   );
 }
 export default App;
