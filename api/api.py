@@ -1,4 +1,5 @@
 import flask
+import sqlite3
 
 from flask import request, jsonify 
 
@@ -44,7 +45,11 @@ def login():
 def home():
     return "<h1>This site is a prototype API</h1>"
 
-    
+
+conn = sqlite3.connect('data.db')
+
+
+
 
 if __name__ == "__main__":
     app.run()
