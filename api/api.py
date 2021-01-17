@@ -1,3 +1,4 @@
+from typing import List
 import flask
 import sqlite3
 from flask import request, jsonify, Flask, abort
@@ -15,72 +16,89 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     roomId = db.Column(db.String(80))
 
-    def __init__(self, username, email): 
-        self.username = username 
+    def __init__(self, username, email):
+        self.username = username
         self.email = email
 
     @property
     def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-           'id': self.id_,
-           'username': self.username,
-           'email': self.email,
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id_,
+            'username': self.username,
+            'email': self.email,
 
-       }
+        }
 
     def __repr__(self):
         return '<User %r %r>' % (self.username, self.email)
 
-class ContactMapping(db.Model):
+
+class Group(db.Model):
     id_ = db.Column(db.Integer, primary_key=True)
-    first_user_id = db.Column(db.Integer)
-    second_user_id = db.Column(db.Integer)
+    name = db.Column(db.String(80), nullable=False)
+
+    @property
+    def serialize(self): return {'id': self.id_, 'name': self.name}
+
+
+class UserToGroup(db.Model):
+    id_ = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    group_id = db.Column(db.Integer)
+
 
 # Display contents on login
-@app.route('/api/v1/contacts', methods=['GET'])
+@app.route('/api/v1/contact_groups', methods=['GET'])
 def displayContacts():
+    # Make sure user_id exists
     user_id = int(request.headers.get('user_id'))
     if len(User.query.filter_by(id_=user_id).all()) == 0:
         abort(404)
-    contact_ids = [mapping.second_user_id for mapping in ContactMapping.query.filter_by(first_user_id=user_id).all()]
-    contacts: List[User] = [User.query.filter_by(id_=contact_id).first() for contact_id in contact_ids]
-    return jsonify(json_list=[contact.serialize for contact in contacts])
+    # Find all groups which user is a member of
+    group_ids = [mapping.group_id for mapping in UserToGroup.query.filter_by(
+        user_id=user_id).all()]
+    groups: List[Group] = [Group.query.filter_by(
+        id_=group_id).first() for group_id in group_ids]
+    return jsonify(json_list=[group.serialize for group in groups])
 
 
-# Adds a contact
-@app.route('/api/v1/contact', methods=['POST'])
+# Adds a contact (Pass in group_id, contacts)
+@app.route('/api/v1/contact_group', methods=['POST'])
 def addContact():
     user_id = int(request.headers.get('user_id'))
-    friend_user_name = request.json.get('friend_user_name')
+    emails = request.json.get('contacts')
+    group_id = int(request.json.get('group_id'))
     try:
-        friend_user: User = User.query.filter_by(username=friend_user_name).all()[0]
-        mapping = ContactMapping(first_user_id=user_id, second_user_id=friend_user.id_)
-        db.session.add(mapping)
+        group = Group.query.get(group_id)
+        users = [User.query.filter_by(email=email).all()[0] for email in emails]
+        # add users to group mapping
+        for user in users:
+            mapping = UserToGroup(user_id=user.id_, group_id=group_id)
+            # if mapping doesn't already exist, dont add it
+            userAlreadyInGroup = len(UserToGroup.query.filter_by(user_id=user.id_, group_id=group_id).all()) != 0
+            if (not userAlreadyInGroup):
+                print("Adding ", user, "To ", group)
+                db.session.add(mapping)
         db.session.commit()
-    except IndexError: # if there are no users with given email
+    except IndexError:
         abort(404)
     return jsonify({})
 
 
-# Delete contact 
-@app.route('/api/v1/contact', methods=['DELETE'])
+# Delete contact
+@app.route('/api/v1/contact_group', methods=['DELETE'])
 def delContact():
     user_id = int(request.headers.get('user_id'))
-    friend_user_name = request.json.get('friend_user_name')
-    try:
-        friend_user: User = User.query.filter_by(username=friend_user_name).all()[0]
-        ContactMapping.query.filter_by(first_user_id=user_id, second_user_id=friend_user.id_).delete()
-        db.session.commit()
-        return jsonify({})
-    except IndexError:
-        abort(404)
+    group_id = request.json.get('group_id')
+    Group.query.filter_by(id_=group_id).delete()
+    UserToGroup.query.filter_by(group_id=group_id).delete() # Also delete all mappings to the group
+    db.session.commit()
+    return jsonify({})
 
-
-
-# Create a room 
+# Create a room
 @app.route('/api/v1/user/room_id', methods=['POST'])
-def createRoom(): 
+def createRoom():
     user_id = int(request.headers.get('user_id'))
     room_id = request.json.get('room_id')
     user: User = User.query.filter_by(id_=user_id).all()[0]
@@ -98,14 +116,14 @@ def joinRoom():
 
 
 @app.route('/api/v1/login', methods=['POST'])
-def login():  
+def login():
     auth_token = str(request.headers.get('auth_token'))
     email = str(request.headers.get('email'))
     username = str(request.json.get('username'))
 
     user = db.session.query(User).filter_by(email=email).first()
 
-    if user is None: 
+    if user is None:
         user = User(username, email)
         db.session.add(user)
         db.session.commit()
@@ -113,19 +131,16 @@ def login():
 
     return user.id
 
-
-
-    # TODO queryParams vs headers 
+    # TODO queryParams vs headers
     # authtok is header
-    # everything else is a queryParam 
+    # everything else is a queryParam
 
-    # TODO look at Firebase documentation for what fields inside auth token are available 
-    
+    # TODO look at Firebase documentation for what fields inside auth token are available
+
     # TODO
-    # Parse out email and username (FirstName LastName from AuthToken) from auth token  
-    # because that information is needed in every one of these functions it should be broken out into its own function 
-    # i.e. AUTHTOKEN CONTAINS (email, username) this should be parsed by a function and passed to whoever needs it 
-
+    # Parse out email and username (FirstName LastName from AuthToken) from auth token
+    # because that information is needed in every one of these functions it should be broken out into its own function
+    # i.e. AUTHTOKEN CONTAINS (email, username) this should be parsed by a function and passed to whoever needs it
 
 
 @app.route('/', methods=['GET'])
@@ -135,5 +150,3 @@ def home():
 
 if __name__ == "__main__":
     app.run()
-
-
