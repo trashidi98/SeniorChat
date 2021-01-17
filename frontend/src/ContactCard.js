@@ -5,15 +5,20 @@ import img from "./images/family.jpg"
 const ContactCardTextShadow = styled.div`
   background-color: rgba(255, 255, 255, 0.4);
   width: 100%;
+  height: 50%;
+  transition: transform .3s ease-out;
+  transform: translate(0, 50%);
+  display: flex;
+  align-items: flex-begin;
+  justify-content: center;
 `;
 
 const ContactCardText = styled.p`
   font-size: 2em;
   opacity: 1.0;
-  padding: 0.5em;
   margin: 0em;
-  text-align: center;
   font-weight: bold;
+  transition: transform .3s ease-out;
 `;
 
 const ContactCardBackground = styled.div`
@@ -28,7 +33,7 @@ const ContactCardBackground = styled.div`
   align-items: center;
   justify-content: flex-end;
   &:hover ${ContactCardTextShadow} {
-    background-color: rgba(181, 178, 25, 0.4);
+    transform: translate(0, 0);
   }
 `;
 
