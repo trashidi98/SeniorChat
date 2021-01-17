@@ -16,24 +16,24 @@ def displayContacts():
 # Adds a contact
 @app.route('/api/v1/contact', methods=['POST'])
 def addContact(): 
-	pass
+    args = request.args
 
 # Delete contact 
 @app.route('/api/v1/contact', methods=['DELETE'])
 def delContact():
-	pass
+	args = request.args
 
 
 # Create a room 
 @app.route('/api/v1/user/room_id', methods=['POST'])
 def createRoom(): 
-	pass
+	args = request.args
 
 
 # Join a room 
 @app.route('/api/v1/user/room_id', methods=['GET'])
 def joinRoom():
-    pass
+    args = request.args
 
 
 @app.route('/api/v1/login', methods=['POST'])
