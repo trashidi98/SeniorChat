@@ -1,3 +1,18 @@
+# Setting up Environment Variables
+
+```bash
+cd api/
+touch .env
+```
+
+- Add the following to .env
+
+```
+TWILIO_ACCOUNT_SID=<XXX>
+TWILIO_API_KEY_SID=<XXX>
+TWILIO_API_KEY_SECRET=<XXX>
+```
+
 # Sample API requests with curl
 
 ```bash
