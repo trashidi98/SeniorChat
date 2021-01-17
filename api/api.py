@@ -14,7 +14,7 @@ class User(db.Model):
     id_ = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    roomId = db.Column(db.Integer)
+    roomId = db.Column(db.String(80))
 
     @property
     def serialize(self):
@@ -47,12 +47,9 @@ def displayContacts():
     return jsonify(json_list=[contact.serialize for contact in contacts])
 
 
-
-
 # Adds a contact
 @app.route('/api/v1/contact', methods=['POST'])
 def addContact():
-    breakpoint()
     user_id = int(request.headers.get('user_id'))
     friend_email = request.json.get('friend_email')
     try:
@@ -82,12 +79,18 @@ def delContact():
 def createRoom(): 
     user_id = int(request.headers.get('user_id'))
     room_id = request.json.get('room_id')
-
+    user: User = User.query.filter_by(id_=user_id).all()[0]
+    user.roomId = room_id
+    db.session.commit()
+    return jsonify({})
 
 # Join a room 
 @app.route('/api/v1/user/room_id', methods=['GET'])
 def joinRoom():
-    args = request.args
+    user_id = int(request.headers.get('user_id'))
+    host_user_name = request.json.get('host_user_name')
+    host: User = User.query.filter_by(username=host_user_name)
+    return jsonify({'roomId': host.roomId})
 
 
 @app.route('/api/v1/login', methods=['POST'])
