@@ -39,7 +39,7 @@ const joinRoom = (roomName) => {
 
 
 
-  needle.get("localhost:5000/api/v1/tmproom", (err, resp) => {
+  needle.get("https://96da9a70b27a.ngrok.io/api/v1/tmproom", (err, resp) => {
     if (!err && resp.statusCode == 200) {
       console.log(resp.body);
 
