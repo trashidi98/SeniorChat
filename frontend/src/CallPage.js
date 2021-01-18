@@ -35,42 +35,54 @@ const watchSelf = () => {
 }
 
 const joinRoom = (roomName) => {
-  connect(TEST_TOKEN, { audio: true, name: roomName, video: { width: 640 } }).then(room => {
-    console.log(`Successfully joined a Room: ${room}`);
 
-    // Get video for already connected participants
-    room.participants.forEach(participant => {
-      participant.tracks.forEach(publication => {
-        if (publication.track) {
-          document.getElementById('remote-media-div').appendChild(publication.track.attach());
-        }
-      });
+
+
+  needle.get("localhost:5000/api/v1/tmproom", (err, resp) => {
+    if (!err && resp.statusCode == 200) {
+      console.log(resp.body);
+
+
+      connect(resp.body.token, { audio: true, name: roomName, video: { width: 640 } }).then(room => {
+        console.log(`Successfully joined a Room: ${room}`);
     
-     participant.on('trackSubscribed', track => {
-        document.getElementById('remote-media-div').appendChild(track.attach());
-      });
-    });
-
-
-    room.on('participantConnected', participant => {
-      console.log(`A remote Participant connected: ${participant}`);
-
-      // Get video for newly connected participants
-      participant.tracks.forEach(publication => {
-        if (publication.isSubscribed) {
-          const track = publication.track;
-          document.getElementById('remote-media-div').appendChild(track.attach());
-        }
-      });
+        // Get video for already connected participants
+        room.participants.forEach(participant => {
+          participant.tracks.forEach(publication => {
+            if (publication.track) {
+              document.getElementById('remote-media-div').appendChild(publication.track.attach());
+            }
+          });
+        
+         participant.on('trackSubscribed', track => {
+            document.getElementById('remote-media-div').appendChild(track.attach());
+          });
+        });
     
-      participant.on('trackSubscribed', track => {
-        document.getElementById('remote-media-div').appendChild(track.attach());
+    
+        room.on('participantConnected', participant => {
+          console.log(`A remote Participant connected: ${participant}`);
+    
+          // Get video for newly connected participants
+          participant.tracks.forEach(publication => {
+            if (publication.isSubscribed) {
+              const track = publication.track;
+              document.getElementById('remote-media-div').appendChild(track.attach());
+            }
+          });
+        
+          participant.on('trackSubscribed', track => {
+            document.getElementById('remote-media-div').appendChild(track.attach());
+          });
+    
+        });
+      }, error => {
+        console.error(`Unable to connect to Room: ${error.message}`);
       });
 
-    });
-  }, error => {
-    console.error(`Unable to connect to Room: ${error.message}`);
-  });
+
+    }
+  })
 };
 
 function CallPage(props){
