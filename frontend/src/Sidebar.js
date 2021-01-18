@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 
 const SidebarWrapper = styled.div`
-  border-left: 1px solid rgba(0,0,0);
+  border-left: 1px solid rgb(0,0,0);
   width: 20em;
   position: fixed;
   right: 0px;
