@@ -1,7 +1,7 @@
 from typing import List
 import flask
 import sqlite3
-from flask import request, jsonify, Flask, abort
+from flask import request, jsonify, Flask, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 import helpers
 
@@ -145,7 +145,9 @@ def login():
         db.session.commit()
         return user.id
 
-    return user.id
+    response = jsonify(id=user.id)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
     # TODO queryParams vs headers
     # authtok is header
