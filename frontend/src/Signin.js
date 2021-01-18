@@ -17,9 +17,7 @@ const SigninForm = styled.div`
   flex-direction: column;
 `;
 
-class Signin extends React.Component{
-  render(){
-
+function Signin(props) {
     var firebaseConfig = {
       apiKey: "AIzaSyByjZezt7xhRuwoKI_GPkYNCmehUCEZj5Q",
       authDomain: "singular-coil-302002.firebaseapp.com",
@@ -52,9 +50,10 @@ class Signin extends React.Component{
     needle.post("localhost:5000/api/v1/login", {
       email: result.additionalUserInfo.profile.email,
       name: result.additionalUserInfo.profile.name,
-    }, (err, resp) => {
+    }, {json: true}, (err, resp) => {
       if (!err && resp.statusCode == 200) {
         console.log(resp.body);
+        props.setCurrent("home");
       }
     })
   
@@ -73,15 +72,14 @@ class Signin extends React.Component{
   });
   }
 
-    return(
-      <SigninWrapper>
-        <SigninForm id="login_div" className="main-div">
-        <h2>Welcome to SeniorChat!</h2>
-        <button onClick={login}>Login using Google</button>
-        </SigninForm>
-      </SigninWrapper>
-    )
-  }
+  return(
+    <SigninWrapper>
+      <SigninForm id="login_div" className="main-div">
+      <h2>Welcome to SeniorChat!</h2>
+      <button onClick={login}>Login using Google</button>
+      </SigninForm>
+    </SigninWrapper>
+  )
 }
 
 export default Signin
