@@ -44,7 +44,7 @@ function App(){
   const [callGroup, setCallGroup] = useState("N/A");
 
   if (currentPage == "signin") {
-    return <Signin/>
+    return <Signin setCurrent={setCurrentPage} />
   }
 
   return(
