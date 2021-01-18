@@ -16,8 +16,8 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
-    def __init__(self, username, email):
-        self.username = username
+    def __init__(self, name, email):
+        self.name = name
         self.email = email
 
     @property
@@ -31,7 +31,7 @@ class User(db.Model):
         }
 
     def __repr__(self):
-        return '<User %r %r>' % (self.username, self.email)
+        return '<User %r %r>' % (self.name, self.email)
 
 
 class Group(db.Model):
