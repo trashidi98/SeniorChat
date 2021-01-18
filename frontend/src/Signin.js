@@ -4,10 +4,24 @@ import "firebase/auth";
 import styled from "styled-components";
 import needle from "needle";
 
+const Button = styled.button`
+  background-color: #4285F4;
+  color: white;
+  padding: 20px 15px;
+  border-radius: 5px;
+  outline: 0; 
+  cursor: pointer;
+  &:hover {
+    background-color: #2979ff
+  }
+  font-family: sans-serif;
+`
+
 const SigninWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
 `;
 
 const SigninForm = styled.div`
@@ -15,6 +29,8 @@ const SigninForm = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  margin: 12em;
+  font-size: 24px;
 `;
 
 class Signin extends React.Component{
@@ -76,8 +92,9 @@ class Signin extends React.Component{
     return(
       <SigninWrapper>
         <SigninForm id="login_div" className="main-div">
-        <h2>Welcome to SeniorChat!</h2>
-        <button onClick={login}>Login using Google</button>
+        <h2>Welcome to SeniorChat</h2>
+        <img src="https://static.thenounproject.com/png/1032078-200.png"></img>
+        <Button onClick={login}>Login using Google</Button>
         </SigninForm>
       </SigninWrapper>
     )

@@ -51,6 +51,14 @@ class UserToGroup(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     group_id = db.Column(db.Integer, nullable=False)
 
+@app.route('/api/v1/tmproom', methods=['GET'])
+def tmp_room():
+    email, name = request.headers.get('email'), request.headers.get('email')
+    token_jwt = helpers.video_access_token(roomId="tmpRoom", username=email)
+    return jsonify({'token': token_jwt.decode('utf-8')})
+
+
+
 @app.route('/api/v1/text', methods=['POST'])
 def send_text():
     try:
