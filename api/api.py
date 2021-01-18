@@ -152,7 +152,7 @@ def login():
 
     users = db.session.query(User).filter_by(email=email).all()
     user: User = None
-    if len(users == 0):
+    if len(users) == 0:
         user = User(name=name, email=email)
         db.session.add(user)
         db.session.commit()
