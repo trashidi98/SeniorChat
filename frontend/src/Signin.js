@@ -2,6 +2,7 @@ import React from 'react';
 import firebase from "firebase/app";
 import "firebase/auth";
 import styled from "styled-components";
+import needle from "needle";
 
 const SigninWrapper = styled.div`
   display: flex;
@@ -42,12 +43,20 @@ class Signin extends React.Component{
   .signInWithPopup(provider)
   .then((result) => {
     /** @type {firebase.auth.OAuthCredential} */
+    console.log(result)
     var credential = result.credential;
   
     // This gives you a Google Access Token. You can use it to access the Google API.
-    var token = credential.accessToken;
-    // The signed-in user info.
-    var user = result.user;
+    var token = credential.idToken;
+
+    needle.post("localhost:5000/api/v1/login", {
+      email: result.additionalUserInfo.profile.email,
+      name: result.additionalUserInfo.profile.name,
+    }, (err, resp) => {
+      if (!err && resp.statusCode == 200) {
+        console.log(resp.body);
+      }
+    })
   
     console.log(token);
     // ...
