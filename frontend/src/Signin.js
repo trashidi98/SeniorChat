@@ -97,7 +97,6 @@ function Signin(props) {
         </SigninForm>
       </SigninWrapper>
     )
-  }
 }
 
 export default Signin
