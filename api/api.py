@@ -53,7 +53,7 @@ class UserToGroup(db.Model):
 
 @app.route('/api/v1/tmproom', methods=['GET'])
 def tmp_room():
-    email, name = request.headers.get('email'), request.headers.get('email')
+    email, name = request.json.get('email'), request.json.get('email')
     email = email if emai
     token_jwt = helpers.video_access_token(roomId="tmpRoom", username=email)
     return jsonify({'token': token_jwt.decode('utf-8')})
@@ -63,7 +63,7 @@ def tmp_room():
 @app.route('/api/v1/text', methods=['POST'])
 def send_text():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist
@@ -75,7 +75,7 @@ def send_text():
 @app.route('/api/v1/user/room_id', methods=['POST'])
 def get_access_token():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist
@@ -91,7 +91,7 @@ def get_access_token():
 def displayContacts():
     breakpoint()
     try:
-        email, name = request.headers.get('email'), request.headers.get('name')
+        email, name = request.json.get('email'), request.json.get('name')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist    # Find all groups which user is a member of
@@ -106,7 +106,7 @@ def displayContacts():
 @app.route('/api/v1/contact_group', methods=['POST'])
 def addContact():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist
@@ -134,7 +134,7 @@ def addContact():
 @app.route('/api/v1/contact_group', methods=['DELETE'])
 def delContact():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist    
