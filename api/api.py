@@ -51,6 +51,7 @@ class UserToGroup(db.Model):
 @app.route('/api/v1/tmproom', methods=['GET'])
 def tmp_room():
     email, name = request.headers.get('email'), request.headers.get('email')
+    email = email if emai
     token_jwt = helpers.video_access_token(roomId="tmpRoom", username=email)
     return jsonify({'token': token_jwt.decode('utf-8')})
 
@@ -146,17 +147,17 @@ def login():
     email = str(request.headers.get('email'))
     name = str(request.json.get('name'))
 
-    user = db.session.query(User).filter_by(email=email).first()
-
-    if user is None:
+    users = db.session.query(User).filter_by(email=email).all()
+    user: User = None
+    if len(users == 0):
         user = User(name=name, email=email)
         db.session.add(user)
         db.session.commit()
-        return user.id_
+    else:
+        user = users[0]
 
-    response = jsonify(id=user.id_)
     response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+    return jsonify({})
 
     # TODO queryParams vs headers
     # authtok is header
