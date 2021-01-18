@@ -53,8 +53,9 @@ class UserToGroup(db.Model):
 
 @app.route('/api/v1/tmproom', methods=['GET'])
 def tmp_room():
-    email, name = request.json.get('email'), request.json.get('email')
-    token_jwt = helpers.video_access_token(roomId="tmpRoom", username=email)
+    import string, random
+    random_string = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
+    token_jwt = helpers.video_access_token(roomId="tmpRoom", username=random_string)
     return jsonify({'token': token_jwt.decode('utf-8')})
 
 
