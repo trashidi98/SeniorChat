@@ -12,6 +12,7 @@ db = SQLAlchemy(app)
 
 # MODELS:
 class User(db.Model):
+    __tablename__ = "users"
     id_ = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -143,9 +144,9 @@ def login():
         user = User(name=name, email=email)
         db.session.add(user)
         db.session.commit()
-        return user.id
+        return user.id_
 
-    response = jsonify(id=user.id)
+    response = jsonify(id=user.id_)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
