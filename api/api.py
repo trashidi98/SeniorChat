@@ -2,6 +2,7 @@ from typing import List
 import flask
 import sqlite3
 from flask import request, jsonify, Flask, abort, Response
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 import helpers
 
@@ -9,6 +10,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config["DEBUG"] = True
 db = SQLAlchemy(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # MODELS:
 class User(db.Model):
@@ -134,6 +137,7 @@ def delContact():
 
 
 @app.route('/api/v1/login', methods=['POST'])
+@cross_origin()
 def login():
     email = str(request.headers.get('email'))
     name = str(request.json.get('name'))
@@ -165,6 +169,12 @@ def login():
 @app.route('/', methods=['GET'])
 def home():
     return "<h1>This site is a prototype API</h1>"
+
+@app.after_request
+def no_cors(response):
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 if __name__ == "__main__":
