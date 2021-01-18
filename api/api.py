@@ -160,7 +160,7 @@ def login():
     else:
         user = users[0]
 
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    # response.headers['Access-Control-Allow-Origin'] = '*'
     return jsonify({})
 
     # TODO queryParams vs headers
