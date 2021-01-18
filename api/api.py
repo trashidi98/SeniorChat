@@ -2,6 +2,7 @@ from typing import List
 import flask
 import sqlite3
 from flask import request, jsonify, Flask, abort, Response
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 import helpers
 
@@ -9,6 +10,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config["DEBUG"] = True
 db = SQLAlchemy(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # MODELS:
 class User(db.Model):
@@ -48,10 +51,18 @@ class UserToGroup(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     group_id = db.Column(db.Integer, nullable=False)
 
+@app.route('/api/v1/tmproom', methods=['GET'])
+def tmp_room():
+    email, name = request.json.get('email'), request.json.get('email')
+    token_jwt = helpers.video_access_token(roomId="tmpRoom", username=email)
+    return jsonify({'token': token_jwt.decode('utf-8')})
+
+
+
 @app.route('/api/v1/text', methods=['POST'])
 def send_text():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist
@@ -63,7 +74,7 @@ def send_text():
 @app.route('/api/v1/user/room_id', methods=['POST'])
 def get_access_token():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist
@@ -79,7 +90,7 @@ def get_access_token():
 def displayContacts():
     breakpoint()
     try:
-        email, name = request.headers.get('email'), request.headers.get('name')
+        email, name = request.json.get('email'), request.json.get('name')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist    # Find all groups which user is a member of
@@ -94,7 +105,7 @@ def displayContacts():
 @app.route('/api/v1/contact_group', methods=['POST'])
 def addContact():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist
@@ -122,7 +133,7 @@ def addContact():
 @app.route('/api/v1/contact_group', methods=['DELETE'])
 def delContact():
     try:
-        email, name = request.headers.get('email'), request.headers.get('email')
+        email, name = request.json.get('email'), request.json.get('email')
         user = User.query.filter_by(email=email).all()[0]
     except IndexError:
         abort(404) # user doesn't exist    
@@ -134,21 +145,22 @@ def delContact():
 
 
 @app.route('/api/v1/login', methods=['POST'])
+@cross_origin()
 def login():
-    email = str(request.headers.get('email'))
-    name = str(request.json.get('name'))
+    email = request.json.get('email')
+    name = request.json.get('name')
 
-    user = db.session.query(User).filter_by(email=email).first()
-
-    if user is None:
+    users = db.session.query(User).filter_by(email=email).all()
+    user: User = None
+    if len(users == 0):
         user = User(name=name, email=email)
         db.session.add(user)
         db.session.commit()
-        return user.id_
+    else:
+        user = users[0]
 
-    response = jsonify(id=user.id_)
     response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+    return jsonify({})
 
     # TODO queryParams vs headers
     # authtok is header
@@ -165,6 +177,12 @@ def login():
 @app.route('/', methods=['GET'])
 def home():
     return "<h1>This site is a prototype API</h1>"
+
+@app.after_request
+def no_cors(response):
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 if __name__ == "__main__":
