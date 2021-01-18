@@ -148,8 +148,8 @@ def delContact():
 @app.route('/api/v1/login', methods=['POST'])
 @cross_origin()
 def login():
-    email = str(request.headers.get('email'))
-    name = str(request.json.get('name'))
+    email = request.json.get('email')
+    name = request.json.get('name')
 
     users = db.session.query(User).filter_by(email=email).all()
     user: User = None
